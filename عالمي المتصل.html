@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>مغامرة حارس الإنترنت — عالمي المتصل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@600;800&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1E2A4A;--ink:#3b4766;--cream:#FFF8EC;--line:#F0E4CC;--blue:#2F9BE0;--green:#22B573;--yellow:#FFC531;--orange:#FF8A3D;--pink:#F2557F;--purple:#8B5CF6;--teal:#14B8A6}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{font-family:'Tajawal','Segoe UI',Tahoma,sans-serif;background:var(--cream);color:var(--navy);background-image:radial-gradient(#ecdfc3 1.6px,transparent 1.6px);background-size:26px 26px}
+button,input{font-family:inherit}
+button{cursor:pointer;border:0;color:inherit;background:none}
+.app{max-width:560px;margin:0 auto;min-height:100vh;padding:18px 16px 30px;display:flex;flex-direction:column}
+.screen{display:none;flex-direction:column;gap:16px;flex:1;animation:in .4s ease}
+.screen.on{display:flex}
+@keyframes in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.disp{font-family:'Baloo Bhaijaan 2','Tajawal',sans-serif}
+.card{background:#fff;border:3px solid var(--line);border-radius:26px;padding:18px;box-shadow:0 6px 0 #EADFC6}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;border-radius:20px;font-size:22px;font-weight:800;color:#fff;background:var(--green);box-shadow:0 6px 0 #17875a;transition:transform .1s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #17875a}
+.btn[disabled]{background:#c9cfdb;box-shadow:0 6px 0 #aab1c0;cursor:default}
+.btn.blue{background:var(--blue);box-shadow:0 6px 0 #1f72a8}
+.btn.ghost{background:#fff;color:var(--navy);border:3px solid var(--line);box-shadow:0 6px 0 #EADFC6}
+.mascot{width:150px;margin:0 auto}
+.float{animation:fl 3s ease-in-out infinite}@keyframes fl{50%{transform:translateY(-8px)}}
+h1{font-size:38px;line-height:1.15;text-align:center}
+.sub{text-align:center;font-size:18px;font-weight:700;color:var(--ink);line-height:1.6}
+label{font-weight:800;font-size:18px;display:block;margin-bottom:6px}
+input[type=text]{width:100%;font-size:22px;font-weight:700;padding:14px 16px;border-radius:18px;border:3px solid var(--line);background:#FFFDF8;color:var(--navy);outline:none}
+input[type=text]:focus{border-color:var(--blue)}
+.avs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.av{border:3px solid var(--line);border-radius:20px;padding:6px;background:#fff;transition:.15s}
+.av.sel{border-color:var(--blue);background:#EAF4FF;transform:scale(1.06)}
+.levels{display:flex;flex-direction:column;gap:10px}
+.lv{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:20px;color:#fff;font-weight:800;font-size:19px}
+.lv .e{font-size:30px;width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.25);display:grid;place-items:center;flex:none}
+.lv small{display:block;font-size:14px;opacity:.95;font-weight:700}
+/* game */
+.hud{display:flex;align-items:center;gap:10px}
+.hud .who{display:flex;align-items:center;gap:8px;font-weight:800;font-size:17px;flex:1;min-width:0}
+.hud .who span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hud .mini{width:40px;flex:none}
+.pts{background:var(--navy);color:#fff;font-weight:800;padding:6px 14px;border-radius:999px;font-size:17px;white-space:nowrap}
+.streak{background:var(--orange);color:#fff;font-weight:800;padding:6px 12px;border-radius:999px;font-size:16px;display:none}
+.streak.on{display:inline-block;animation:pop .4s}
+.bar{height:14px;border-radius:9px;background:#EDE3CF;overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,var(--purple),var(--blue),var(--green));transition:width .4s}
+.lvtag{align-self:center;color:#fff;font-weight:800;padding:6px 18px;border-radius:999px;font-size:17px}
+.q{font-size:24px;font-weight:800;line-height:1.55;text-align:center}
+.qcard{min-height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.qcard .big{font-size:46px}
+.url{direction:ltr;font-family:Consolas,monospace;font-weight:800;font-size:22px;background:#EEF5FF;padding:6px 14px;border-radius:12px;color:#1f5c99}
+.opts{display:flex;flex-direction:column;gap:12px}
+.opts.two{flex-direction:row}
+.opt{flex:1;display:flex;align-items:center;gap:12px;background:#fff;border:3px solid var(--line);border-radius:20px;padding:14px;font-size:20px;font-weight:800;text-align:right;line-height:1.4;box-shadow:0 5px 0 #EADFC6;transition:transform .1s}
+.opt:active{transform:translateY(3px)}
+.opt .L{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#fff;flex:none;font-size:20px}
+.opts.two .opt{flex-direction:column;justify-content:center;text-align:center;font-size:22px;padding:18px 10px}
+.opts.two .opt .L{width:56px;height:56px;border-radius:50%;font-size:30px}
+.opt.right{background:#E3F8EC;border-color:var(--green);box-shadow:0 5px 0 #9fdcbc;animation:pop .4s}
+.opt.wrong{background:#FFE6EC;border-color:var(--pink);box-shadow:0 5px 0 #f4a9bd;animation:shake .4s}
+.opt.dim{opacity:.45}
+@keyframes pop{50%{transform:scale(1.05)}}
+@keyframes shake{25%,75%{transform:translateX(-8px)}50%{transform:translateX(8px)}}
+.fb{display:none;border-radius:20px;padding:12px 16px;font-size:18px;font-weight:800;line-height:1.55}
+.fb.on{display:block;animation:in .3s}
+.fb.good{background:#E3F8EC;color:#11734a}.fb.bad{background:#FFF0D6;color:#8a4b00}
+/* level intro */
+.intro{align-items:center;justify-content:center;text-align:center}
+.intro .badgeBig{width:130px;height:130px;border-radius:40px;display:grid;place-items:center;font-size:70px;color:#fff;box-shadow:0 8px 0 rgba(0,0,0,.12)}
+/* result */
+.cert{background:#fff;border-radius:30px;border:4px solid var(--navy);padding:18px 16px 16px;position:relative;overflow:hidden;box-shadow:0 8px 0 rgba(30,42,74,.15)}
+.cert:before{content:"";position:absolute;inset:8px;border:2px dashed #E3D6B8;border-radius:22px;pointer-events:none}
+.cert .top{text-align:center;font-weight:800;font-size:15px;color:var(--ink)}
+.cert h2{text-align:center;font-size:30px;color:var(--purple);margin:2px 0}
+.cert .nm{text-align:center;font-size:32px;font-weight:800;margin:6px 0;line-height:1.3;word-break:break-word}
+.cert .cls{text-align:center;font-weight:700;color:var(--ink);font-size:17px}
+.stars{display:flex;justify-content:center;gap:6px;font-size:44px;margin:6px 0}
+.stars .off{filter:grayscale(1);opacity:.25}
+.score{display:flex;justify-content:center;align-items:baseline;gap:8px}
+.score b{font-family:'Baloo Bhaijaan 2';font-size:56px;color:var(--green);line-height:1}
+.score span{font-size:20px;font-weight:800;color:var(--ink)}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.bdg{border-radius:18px;padding:8px 4px;text-align:center;font-weight:800;font-size:14px;line-height:1.35;color:#fff}
+.bdg .e{font-size:30px;display:block}
+.bdg.lock{background:#E9E3D6!important;color:#9aa1b5}
+.bdg .sc{display:block;font-size:13px;opacity:.95}
+.meta{display:flex;justify-content:space-between;gap:8px;margin-top:12px;font-size:14px;font-weight:700;color:var(--ink);flex-wrap:wrap}
+.code{direction:ltr;font-family:Consolas,monospace;font-weight:800;background:#F3EBDA;padding:2px 10px;border-radius:8px}
+.msgBig{text-align:center;font-weight:800;font-size:19px;margin-top:8px;line-height:1.5}
+.shot{background:var(--navy);color:#fff;border-radius:22px;padding:14px 16px;font-weight:800;font-size:18px;line-height:1.6;text-align:center}
+.shot b{color:var(--yellow)}
+.confetti{position:fixed;width:10px;height:16px;top:-20px;z-index:50;pointer-events:none;animation:fall 2.6s ease-in forwards;border-radius:3px}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.tiny{font-size:14px;color:#8a92a8;text-align:center;font-weight:700}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- START -->
+  <section class="screen on" id="sStart">
+    <div class="mascot float" data-m="0"></div>
+    <h1 class="disp">مغامرة <span style="color:var(--green)">حارس الإنترنت</span> 🛡️</h1>
+    <p class="sub">الوحدة الثالثة: عالمي المتصل<br>مصادر المعلومات · السلامة على الإنترنت</p>
+    <div class="card">
+      <label for="nm">✏️ اكتب اسمك الثلاثي</label>
+      <input type="text" id="nm" maxlength="40" placeholder="" autocomplete="off">
+      <div style="height:12px"></div>
+      <label for="cl">🏫 الصف والفصل (اختياري)</label>
+      <input type="text" id="cl" maxlength="20" placeholder="مثال: رابع / f" autocomplete="off">
+      <div style="height:14px"></div>
+      <label>🤖 اختر شخصيتك</label>
+      <div class="avs" id="avs"></div>
+    </div>
+    <button class="btn" id="goBtn" disabled onclick="startGame()">ابدأ المغامرة 🚀</button>
+    <p class="tiny">3 مراحل · 18 سؤالًا · كل إجابة صحيحة = 10 نقاط</p>
+  </section>
+
+  <!-- MAP -->
+  <section class="screen" id="sMap">
+    <div class="mascot" id="mapAv" style="width:110px"></div>
+    <h1 class="disp" style="font-size:30px">أهلًا يا <span id="mapName" style="color:var(--blue)"></span> 👋</h1>
+    <p class="sub">ستمرّ بثلاث مراحل. أجب بتركيز لتجمع النجوم والأوسمة!</p>
+    <div class="levels" id="levels"></div>
+    <button class="btn blue" onclick="nextLevel()">هيا بنا! ⚡</button>
+  </section>
+
+  <!-- LEVEL INTRO -->
+  <section class="screen intro" id="sIntro">
+    <div class="badgeBig" id="inBadge"></div>
+    <div class="lvtag" id="inTag"></div>
+    <h1 class="disp" id="inTitle"></h1>
+    <p class="sub" id="inDesc"></p>
+    <button class="btn" onclick="showQ()" style="max-width:360px">ابدأ المرحلة ▶</button>
+  </section>
+
+  <!-- QUESTION -->
+  <section class="screen" id="sQ">
+    <div class="hud">
+      <div class="who"><div class="mini" id="hudAv"></div><span id="hudName"></span></div>
+      <span class="streak" id="streak"></span>
+      <span class="pts">⭐ <span id="pts">0</span></span>
+    </div>
+    <div class="bar"><i id="prog"></i></div>
+    <div class="lvtag" id="qTag"></div>
+    <div class="card qcard" id="qCard"></div>
+    <div class="opts" id="opts"></div>
+    <div class="fb" id="fb"></div>
+    <button class="btn blue" id="nextBtn" style="display:none" onclick="nextQ()">التالي ⬅</button>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="sRes">
+    <div class="cert" id="cert">
+      <div class="top">🌐 الوحدة الثالثة: عالمي المتصل · الصف الرابع</div>
+      <h2 class="disp">شهادة حارس الإنترنت</h2>
+      <div class="mascot" id="resAv" style="width:100px"></div>
+      <div class="nm" id="resName"></div>
+      <div class="cls" id="resClass"></div>
+      <div class="stars" id="stars"></div>
+      <div class="score"><b id="resScore"></b><span id="resOf"></span></div>
+      <div class="msgBig" id="resMsg"></div>
+      <div class="badges" id="badges"></div>
+      <div class="meta"><span id="resDate"></span><span>الرمز: <span class="code" id="resCode"></span></span></div>
+    </div>
+    <div class="shot">📸 <b>صوّر هذه الشاشة</b> وأرسل الصورة<br>لمعلمك في دردشة تيمز 💬</div>
+    <button class="btn ghost" onclick="again()">🔁 العب مرة أخرى</button>
+  </section>
+</div>
+
+<script>
+/* ---------- robots ---------- */
+const AV=[['#2F9BE0','#FFC531'],['#22B573','#F2557F'],['#8B5CF6','#FFC531'],['#FF8A3D','#2F9BE0']];
+function robot(i,happy=true){const [b,a]=AV[i];
+return `<svg viewBox="0 0 200 250" width="100%"><ellipse cx="100" cy="244" rx="56" ry="6" fill="#000" opacity=".08"/>
+<line x1="100" y1="34" x2="100" y2="14" stroke="#1E2A4A" stroke-width="6"/><circle cx="100" cy="12" r="10" fill="${a}"/>
+<path d="M150 168 q34 -10 38 -50" stroke="${b}" stroke-width="14" fill="none" stroke-linecap="round"/><circle cx="188" cy="112" r="13" fill="${a}"/>
+<path d="M50 170 q-30 10 -34 40" stroke="${b}" stroke-width="14" fill="none" stroke-linecap="round"/><circle cx="16" cy="214" r="12" fill="${a}"/>
+<rect x="44" y="150" width="112" height="84" rx="30" fill="${b}"/><rect x="66" y="168" width="68" height="40" rx="14" fill="#fff" opacity=".85"/>
+<circle cx="84" cy="188" r="7" fill="#22B573"/><circle cx="100" cy="188" r="7" fill="#FFC531"/><circle cx="116" cy="188" r="7" fill="#F2557F"/>
+<rect x="30" y="34" width="140" height="122" rx="44" fill="#fff" stroke="#1E2A4A" stroke-width="6"/><rect x="48" y="54" width="104" height="84" rx="30" fill="#EAF6FF"/>
+<circle cx="80" cy="92" r="10" fill="#1E2A4A"/><circle cx="120" cy="92" r="10" fill="#1E2A4A"/><circle cx="84" cy="88" r="3.5" fill="#fff"/><circle cx="124" cy="88" r="3.5" fill="#fff"/>
+${happy?'<path d="M80 112 q20 22 40 0" stroke="#1E2A4A" stroke-width="6" fill="none" stroke-linecap="round"/>':'<path d="M84 120 q16 -8 32 0" stroke="#1E2A4A" stroke-width="6" fill="none" stroke-linecap="round"/>'}
+<circle cx="66" cy="114" r="8" fill="#FF9EB5" opacity=".7"/><circle cx="134" cy="114" r="8" fill="#FF9EB5" opacity=".7"/>
+<rect x="20" y="78" width="14" height="36" rx="7" fill="${a}"/><rect x="166" y="78" width="14" height="36" rx="7" fill="${a}"/></svg>`}
+
+/* ---------- content (from the textbook, lessons 3 & 4) ---------- */
+const RELI=[['موثوق','✅','#22B573'],['انتبه!','⚠️','#FF8A3D']];
+const BEH=[['سلوك صحيح','👍','#22B573'],['سلوك خاطئ','👎','#F2557F']];
+const TF=[['صح','✓','#22B573'],['خطأ','✗','#F2557F']];
+const LEVELS=[
+ {name:'محقق المعلومات',emoji:'🔎',color:'#2F9BE0',desc:'هل تستطيع أن تميّز المعلومة الموثوقة؟ وتعرف كيف تنسخ وتحترم عمل الآخرين؟',badge:'وسام المحقق',
+  qs:[
+   {k:'two',o:RELI,a:0,ask:'هل هذا المصدر موثوق؟',show:'<span class="url">www.moh.gov.sa</span><span>موقع وزارة الصحة 🏥</span>',fb:'المواقع الرسمية المعتمدة مثل وزارة الصحة تقدم معلومات صحيحة، ونهاية عنوانها ‎.gov تعني جهة حكومية.'},
+   {k:'two',o:RELI,a:1,ask:'هل هذا المصدر موثوق؟',show:'<span class="big">👤</span><span>منشور كتبه شخص لا نعرفه في موقع عام</span>',fb:'ما يكتبه أشخاص في مواقع عامة قد يكون غير صحيح، فنفكر في صحته ونسأل من نثق بهم.'},
+   {k:'two',o:RELI,a:0,ask:'هل هذا المصدر موثوق؟',show:'<span class="url">www.ien.edu.sa</span><span>موقع مؤسسة تعليمية 🎓</span>',fb:'نهاية العنوان ‎.edu تعني مؤسسة تعليمية.'},
+   {k:'mcq',ask:'كيف أتأكد أن المعلومة حديثة؟',show:'<span class="big">📅</span>',o:['أنظر إلى تاريخ آخر تحديث للصفحة','أختار أول نتيجة دائمًا','أعدّ الروابط في الصفحة'],a:0,fb:'تاريخ آخر تحديث يظهر غالبًا أسفل الصفحة.'},
+   {k:'mcq',ask:'لنسخ نص من موقع: أظلّل النص، ثم أضغط زر الفأرة الأيمن وأختار:',show:'<span class="big">🖱️</span>',o:['نسخ (Copy)','لصق (Paste)','تحديث (Refresh)'],a:0,fb:'نسخ أولًا، ثم نلصقه في محرر نصوص مثل وورد.'},
+   {k:'two',o:TF,a:1,ask:'صح أم خطأ؟',show:'<span class="big">🖼️</span><span>يمكنني استخدام صور الآخرين بدون إذنهم ودون ذكر المصدر.</span>',fb:'هذا تعدٍّ على حقوق الآخرين. نستأذن صاحب العمل أو نذكر المصدر دائمًا.'}
+  ]},
+ {name:'سفير الأخلاق',emoji:'💬',color:'#22B573',desc:'كيف نتواصل بأدب واحترام على الإنترنت؟ قرّر: هل السلوك صحيح أم خاطئ؟',badge:'وسام السفير',
+  qs:[
+   {k:'two',o:BEH,a:0,ask:'هل هذا السلوك صحيح؟',show:'<span class="big">✉️</span><span>أجعل رسائلي مختصرة وواضحة.</span>',fb:'من أخلاقيات التواصل: أن تكون رسائلك مختصرة.'},
+   {k:'two',o:BEH,a:1,ask:'هل هذا السلوك صحيح؟',show:'<span class="big">😂</span><span>أسخر من زميلي أمام الجميع إذا أخطأ إملائيًّا.</span>',fb:'نكون لطيفين ولا نحرج أحدًا، ويمكن أن ننبّهه بأدب على انفراد.'},
+   {k:'two',o:BEH,a:0,ask:'هل هذا السلوك صحيح؟',show:'<span class="big">👋</span><span>أودّع أصدقائي عند انتهاء الحديث معهم.</span>',fb:'التوديع أسلوب تعامل مهم عند التواصل مع الأصدقاء.'},
+   {k:'two',o:BEH,a:1,ask:'هل هذا السلوك صحيح؟',show:'<span class="big">😠</span><span>أرسل رسالة وأنا غاضب لأن أحدهم أزعجني.</span>',fb:'احذر أن ترسل شيئًا وأنت غاضب، حتى لو أغضبك أحد.'},
+   {k:'two',o:BEH,a:0,ask:'هل هذا السلوك صحيح؟',show:'<span class="big">🌍</span><span>أحترم ثقافة الآخرين في غرف المحادثة.</span>',fb:'نتواصل مع أشخاص من كل العالم وثقافاتهم تختلف عن ثقافتنا.'},
+   {k:'two',o:BEH,a:1,ask:'هل هذا السلوك صحيح؟',show:'<span class="big">🗣️</span><span>أجادل الآخرين وألومهم.</span>',fb:'القاعدة: لا تجادل، ولا تلُم أي شخص.'}
+  ]},
+ {name:'درع الأمان',emoji:'🛡️',color:'#8B5CF6',desc:'احمِ حاسبك من الفيروسات، واحمِ نفسك من الغرباء!',badge:'وسام الحارس',
+  qs:[
+   {k:'mcq',ask:'الفيروس هو:',show:'<span class="big">🦠</span>',o:['برنامج يدخل الحاسب ويحاول الإضرار به','برنامج يحمي الحاسب','موقع إلكتروني موثوق'],a:0,fb:'قد يحاول الفيروس حذف الملفات أو سرقة المعلومات الشخصية.'},
+   {k:'mcq',ask:'برنامج مكافحة الفيروسات هو برنامج:',show:'<span class="big">🛡️</span>',o:['يُنشئ الفيروسات','يمنع الفيروسات','يضاعف الفيروسات','يقسّم الفيروسات'],a:1,fb:'يمنع الفيروسات من الإضرار بجهازك.'},
+   {k:'mcq',ask:'لماذا يجب تحديث برنامج مكافحة الفيروسات دائمًا؟',show:'<span class="big">🔄</span>',o:['لأن الفيروسات تتجدد باستمرار','لتغيير لون الشاشة','لتكبير الخط'],a:0,fb:'تظهر فيروسات جديدة دائمًا.'},
+   {k:'mcq',ask:'شخص لا تعرفه سألك: كم عمرك؟ وأين تسكن؟ ماذا تفعل؟',show:'<span class="big">💬❓</span>',o:['أجيبه بسرعة','لا أتحدث إليه وأخبر كبيرًا في الأسرة فورًا','أعطيه رقم هاتفي فقط'],a:1,fb:'لا نعطي معلوماتنا الشخصية لمن لا نعرفه.'},
+   {k:'mcq',ask:'الاسم المستعار المناسب لك يمكن أن يكون:',show:'<span class="big">🎭</span>',o:['اسم عائلتك','رقم هاتفك','اسم شخصية مفضلة لديك','عنوانك'],a:2,fb:'الاسم المستعار لا يكشف معلوماتك الشخصية.'},
+   {k:'mcq',ask:'إذا هدّدك أحد على الإنترنت، ماذا تفعل؟',show:'<span class="big">🚨</span>',o:['أبلّغ شخصًا كبيرًا في الأسرة ولا أتردد','أسكت ولا أخبر أحدًا','أرد عليه وأنا غاضب'],a:0,fb:'كن شجاعًا 💪 وأخبر شخصًا كبيرًا في الأسرة.'}
+  ]}
+];
+const TOTAL=LEVELS.reduce((s,l)=>s+l.qs.length,0);
+
+/* ---------- sound & fx ---------- */
+let AC=null;function tone(seq){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();let t=AC.currentTime;seq.forEach(([f,d,ty])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ty||'sine';o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.22,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.02);t+=d*.85})}catch(e){}}
+const sGood=()=>tone([[660,.1],[880,.1],[1175,.2]]),sBad=()=>tone([[300,.16,'triangle'],[220,.24,'triangle']]),sWin=()=>tone([[523,.12],[659,.12],[784,.12],[1047,.4]]);
+function confetti(n=60){const cs=['#2F9BE0','#22B573','#FFC531','#FF8A3D','#F2557F','#8B5CF6'];for(let i=0;i<n;i++){const d=document.createElement('div');d.className='confetti';d.style.left=Math.random()*100+'vw';d.style.background=cs[i%6];d.style.animationDelay=Math.random()*.7+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3600)}}
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- state ---------- */
+let S={};const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');scrollTo(0,0)}
+
+/* start screen */
+let avSel=0;
+$('avs').innerHTML=AV.map((_,i)=>`<button class="av ${i===0?'sel':''}" data-i="${i}" aria-label="شخصية ${i+1}">${robot(i)}</button>`).join('');
+document.querySelectorAll('.av').forEach(b=>b.onclick=()=>{avSel=+b.dataset.i;document.querySelectorAll('.av').forEach(x=>x.classList.toggle('sel',x===b));document.querySelector('[data-m]').innerHTML=robot(avSel);tone([[700,.08]])});
+document.querySelector('[data-m]').innerHTML=robot(0);
+$('nm').addEventListener('input',()=>{$('goBtn').disabled=$('nm').value.trim().length<3});
+$('nm').addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('goBtn').disabled)startGame()});
+
+function startGame(){
+  const name=$('nm').value.trim().replace(/\s+/g,' ');if(name.length<3)return;
+  S={name,cls:$('cl').value.trim(),av:avSel,lv:-1,qi:0,score:0,streak:0,best:0,per:[0,0,0],answered:0,start:Date.now(),
+     order:LEVELS.map(l=>shuffle(l.qs))};
+  $('mapAv').innerHTML=robot(S.av);$('mapName').textContent=name.split(' ')[0];
+  $('levels').innerHTML=LEVELS.map((l,i)=>`<div class="lv" style="background:${l.color}"><span class="e">${l.emoji}</span><div>المرحلة ${i+1}: ${l.name}<small>${l.qs.length} أسئلة · ${l.badge}</small></div></div>`).join('');
+  $('hudAv').innerHTML=robot(S.av);$('hudName').textContent=name;$('pts').textContent=0;
+  show('sMap');sGood();
+}
+function nextLevel(){
+  S.lv++;S.qi=0;
+  if(S.lv>=LEVELS.length)return finish();
+  const l=LEVELS[S.lv];
+  $('inBadge').style.background=l.color;$('inBadge').textContent=l.emoji;
+  $('inTag').style.background=l.color;$('inTag').textContent='المرحلة '+(S.lv+1)+' من '+LEVELS.length;
+  $('inTitle').textContent=l.name;$('inDesc').textContent=l.desc;
+  show('sIntro');tone([[523,.1],[784,.15]]);
+}
+function showQ(){
+  const l=LEVELS[S.lv],q=S.order[S.lv][S.qi];
+  show('sQ');
+  $('qTag').style.background=l.color;$('qTag').textContent=l.emoji+' '+l.name+' · سؤال '+(S.qi+1)+' من '+l.qs.length;
+  $('prog').style.width=(S.answered/TOTAL*100)+'%';
+  $('qCard').innerHTML=`<div class="q">${q.ask}</div>${q.show||''}`;
+  $('qCard').querySelectorAll('span:not(.big):not(.url)').forEach(s=>{s.style.fontSize='21px';s.style.fontWeight='800';s.style.textAlign='center';s.style.lineHeight='1.5'});
+  const box=$('opts');$('fb').className='fb';$('nextBtn').style.display='none';
+  if(q.k==='two'){
+    box.className='opts two';
+    box.innerHTML=q.o.map((o,k)=>`<button class="opt" data-k="${k}"><span class="L" style="background:${o[2]}">${o[1]}</span>${o[0]}</button>`).join('');
+  }else{
+    box.className='opts';
+    const idx=shuffle(q.o.map((_,k)=>k));const L=['أ','ب','ج','د'],C=['#2F9BE0','#22B573','#FF8A3D','#8B5CF6'];
+    box.innerHTML=idx.map((k,p)=>`<button class="opt" data-k="${k}"><span class="L" style="background:${C[p]}">${L[p]}</span>${q.o[k]}</button>`).join('');
+  }
+  box.querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(+b.dataset.k));
+}
+function pick(k){
+  const q=S.order[S.lv][S.qi];if($('nextBtn').style.display!=='none')return;
+  const ok=k===q.a;S.answered++;
+  document.querySelectorAll('#opts .opt').forEach(b=>{const kk=+b.dataset.k;b.disabled=true;if(kk===q.a)b.classList.add('right');else if(kk===k)b.classList.add('wrong');else b.classList.add('dim')});
+  if(ok){S.score+=10;S.per[S.lv]++;S.streak++;S.best=Math.max(S.best,S.streak);sGood()}else{S.streak=0;sBad()}
+  $('pts').textContent=S.score;
+  const st=$('streak');if(S.streak>=3){st.textContent='🔥 '+S.streak;st.classList.remove('on');void st.offsetWidth;st.classList.add('on')}else st.classList.remove('on');
+  const fb=$('fb');fb.className='fb on '+(ok?'good':'bad');
+  const corr=q.k==='two'?q.o[q.a][0]:q.o[q.a];
+  fb.innerHTML=(ok?['🎉 أحسنت!','👏 ممتاز!','🌟 رائع!','💪 بطل!'][Math.floor(Math.random()*4)]+' ':'💡 الإجابة الصحيحة: «'+corr+'». ')+q.fb;
+  $('prog').style.width=(S.answered/TOTAL*100)+'%';
+  const last=S.qi===LEVELS[S.lv].qs.length-1;
+  $('nextBtn').textContent=last?(S.lv===LEVELS.length-1?'اعرض شهادتي 🏆':'المرحلة التالية 🚀'):'التالي ⬅';
+  $('nextBtn').style.display='flex';
+}
+function nextQ(){S.qi++;if(S.qi>=LEVELS[S.lv].qs.length){if(S.per[S.lv]>=LEVELS[S.lv].qs.length-1)confetti(30);nextLevel()}else showQ()}
+
+function finish(){
+  const pct=Math.round(S.score/(TOTAL*10)*100);
+  const stars=pct>=90?3:pct>=70?2:pct>=40?1:0;
+  let attempt=1;try{const key='hg_attempts_'+S.name;attempt=(+localStorage.getItem(key)||0)+1;localStorage.setItem(key,attempt)}catch(e){}
+  $('resAv').innerHTML=robot(S.av,true);
+  $('resName').textContent=S.name;
+  $('resClass').textContent=S.cls?('الصف: '+S.cls):'';
+  $('stars').innerHTML=[0,1,2].map(i=>`<span class="${i<stars?'':'off'}">⭐</span>`).join('');
+  $('resScore').textContent=S.score;$('resOf').textContent='من '+TOTAL*10+' نقطة ('+pct+'%)';
+  $('resMsg').textContent=pct===100?'علامة كاملة! أنت حارس إنترنت أسطوري 🏆':pct>=90?'رائع جدًا! أنت حارس إنترنت ممتاز 🌟':pct>=70?'أحسنت! أنت على الطريق الصحيح 👏':pct>=40?'جيد! راجع الدرس وحاول مرة أخرى 💪':'لا بأس! راجع الدرس مع معلمك وجرّب من جديد 📚';
+  $('badges').innerHTML=LEVELS.map((l,i)=>{const got=S.per[i]>=l.qs.length-1;return `<div class="bdg ${got?'':'lock'}" style="background:${l.color}"><span class="e">${got?l.emoji:'🔒'}</span>${l.badge}<span class="sc">${S.per[i]} من ${l.qs.length}</span></div>`}).join('');
+  const d=new Date();let ds;
+  try{ds=d.toLocaleDateString('ar-SA-u-ca-gregory-nu-latn',{year:'numeric',month:'long',day:'numeric'})+' · '+d.toLocaleTimeString('ar-SA-u-nu-latn',{hour:'2-digit',minute:'2-digit'})}catch(e){ds=d.toISOString().slice(0,16).replace('T',' ')}
+  $('resDate').textContent='📅 '+ds+' · المحاولة '+attempt;
+  // simple verification code: name + score + minute
+  const raw=S.name+'|'+S.score+'|'+d.getFullYear()+d.getMonth()+d.getDate()+d.getHours()+d.getMinutes();let h=2166136261;for(const c of raw){h^=c.charCodeAt(0);h=Math.imul(h,16777619)>>>0}
+  $('resCode').textContent='HG-'+(S.score/10)+'-'+h.toString(36).toUpperCase().slice(0,5);
+
+  // --- الكود الجديد لإرسال البيانات إلى جوجل شيت ---
+  const webAppUrl = "https://script.google.com/macros/s/AKfycbxuswL42oSlEXjTrw07_BJhgmdG31TW2zXmAJJSagTNRX8XZlapwn7pcr-Me1K3omg/exec"; 
+  fetch(webAppUrl, {
+    method: 'POST',
+    mode: 'no-cors', // لتجنب أخطاء المتصفح عند الإرسال
+    body: JSON.stringify({
+      name: S.name,
+      cls: S.cls || 'غير محدد',
+      score: S.score
+    })
+  }).catch(e => console.log('خطأ في الإرسال', e));
+  // ------------------------------------------------
+
+  show('sRes');sWin();if(stars>=1)confetti(stars*30);
+}
+function again(){show('sStart');$('nm').focus()}
+
+// --- كود تحميل الشهادة كصورة ---
+function downloadCert() {
+  const certElement = document.getElementById('cert');
+  const btn = event.currentTarget;
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '⏳ جاري الحفظ...';
+  
+  html2canvas(certElement, { scale: 2, backgroundColor: null, useCORS: true }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = 'شهادة_حارس_الإنترنت_' + S.name.replace(/\s+/g, '_') + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    btn.innerHTML = '✅ تم الحفظ';
+    setTimeout(() => { btn.innerHTML = originalText; }, 3000);
+  });
+}
+// ------------------------------
+
+</script>
+</body>
+</html>
